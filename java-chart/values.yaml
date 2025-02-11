@@ -37,11 +37,11 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: LoadBalancer
+  name: java-chart
+  type: NodePort
   port: 80
   targetPort: 8080
-  protocol: TCP
-  name: java-chart
+  nodePort: 30080
 
 ingress:
   enabled: false
