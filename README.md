@@ -1,1 +1,1 @@
-# Deploy-java-helm-chart-on-EKS-using-GitHub-Actions
+# Deploy-java-helm-chart-on-K8's
