@@ -39,43 +39,45 @@ jobs:
           cache: 'maven'
       - run: mvn -B package --file pom.xml
       - run: mkdir dev && cp -r target* dev
+      - run: pwd && ls -al
       - uses: actions/upload-artifact@v4
         with:
           name: Artifacts
           path: dev
+    
 
-  build-and-push-image:
-    runs-on: ubuntu-latest
-    needs: [publish-artifacts]
-    permissions:
-      contents: read
-      packages: write
+#   build-and-push-image:
+#     runs-on: ubuntu-latest
+#     needs: [publish-artifacts]
+#     permissions:
+#       contents: read
+#       packages: write
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
 
-      - name: Log in to the GitHub Container registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+#       - name: Log in to the GitHub Container registry
+#         uses: docker/login-action@v3
+#         with:
+#           registry: ${{ env.REGISTRY }}
+#           username: ${{ github.actor }}
+#           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+#       - name: Extract metadata (tags, labels) for Docker
+#         id: meta
+#         uses: docker/metadata-action@v4
+#         with:
+#           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+#       - name: Build and push Docker image
+#         uses: docker/build-push-action@v5
+#         with:
+#           context: .
+#           file: ./Dockerfile
+#           push: true
+#           tags: ${{ steps.meta.outputs.tags }}
+#           labels: ${{ steps.meta.outputs.labels }}
   
 #   helm_package_and_push:
 #     runs-on: ubuntu-latest
