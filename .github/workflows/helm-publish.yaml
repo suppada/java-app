@@ -42,7 +42,7 @@ jobs:
       - run: pwd && ls -al
       - uses: actions/upload-artifact@v4
         with:
-          name: Published-Artifacts
+          name: Artifacts
           path: target
 
   build-and-push-image:
