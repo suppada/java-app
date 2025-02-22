@@ -8,7 +8,7 @@ image:
   repository:  ghcr.io/suppada/springboot/java-chart
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.1.0"
+  tag: "{{ .Values.appVersion | default .Chart.AppVersion }}"
 
 imagePullSecrets: []
 nameOverride: ""
