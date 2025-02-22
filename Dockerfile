@@ -1,5 +1,8 @@
 FROM tomcat:9
-WORKDIR /home/runner/work/java-app/java-app
-COPY ./dev/target/hello-1.0.war /usr/local/tomcat/webapps/
+# Set working directory
+WORKDIR /usr/local/tomcat
+# Remove default webapps to avoid conflicts
+RUN rm -rf webapps/*
+COPY ./dev/target/hello-1.0.war ./webapps/hello.war
 CMD ["catalina.sh", "run"]
 EXPOSE 8080
