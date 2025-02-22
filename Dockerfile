@@ -8,7 +8,7 @@ WORKDIR /usr/local/tomcat/webapps/
 RUN rm -rf ROOT
 
 # Copy WAR file from the GitHub Actions artifact
-COPY ./dev/target/hello-1.0.war ./ROOT.war
+COPY ./target/hello-1.0.war ./ROOT.war
 
 # Expose port 8080
 EXPOSE 8080

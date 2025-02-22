@@ -39,12 +39,11 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: Artifacts
-      - run: mkdir dev && cp -r target/* dev
-      - run: pwd && ls -R dev
+      - run: pwd && ls -al
       - uses: actions/upload-artifact@v4
         with:
           name: Published-Artifacts
-          path: dev
+          path: target
 
   build-and-push-image:
     runs-on: ubuntu-latest
