@@ -89,7 +89,7 @@ jobs:
 
       - name: Package Helm Chart
         run: |
-          helm package charts/${{ env.CHART_NAME }} --version ${{ env.CHART_VERSION }}
+          helm package ${{ env.CHART_NAME }} --version ${{ env.CHART_VERSION }}
           ls -l *.tgz
 
       - name: Push Helm Chart to OCI Registry
