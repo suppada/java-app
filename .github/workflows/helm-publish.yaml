@@ -39,7 +39,7 @@ jobs:
           cache: 'maven'
       - run: mvn -B package --file pom.xml
       - run: mkdir dev && cp -r target* dev
-      - run: pwd && ls -al
+      - run: pwd && ls -R dev/target
       - uses: actions/upload-artifact@v4
         with:
           name: Artifacts
