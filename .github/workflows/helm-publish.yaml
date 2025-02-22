@@ -38,10 +38,11 @@ jobs:
           java-version: '21'
           cache: 'maven'
       - run: mvn -B package --file pom.xml
+      - run: mkdir dev && cp -r target* dev
       - uses: actions/upload-artifact@v4
         with:
           name: Artifacts
-          path: target
+          path: dev
 
   build-and-push-image:
     runs-on: ubuntu-latest
