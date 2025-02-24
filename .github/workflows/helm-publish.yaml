@@ -14,8 +14,28 @@ env:
   CHART_VERSION: 1.0.1
 
 jobs:
-  maven_build_and_test:
+  codeql-analysis:
+    name: CodeQL Analysis
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+
+  maven_build_and_test:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    needs: codeql-analysis
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 21
@@ -32,7 +52,8 @@ jobs:
           name: maven-artifact
           path: target/*.war
 
-  build-and-push-image:
+  Docker_build_and_push_image_TO_GHCR:
+    name: Build and Push Docker image
     runs-on: ubuntu-latest
     needs: [maven_build_and_test]
     permissions:
@@ -70,7 +91,7 @@ jobs:
   
   helm_package_and_push:
     runs-on: ubuntu-latest
-    needs: [build-and-push-image]
+    needs: [Docker_build_and_push_image_TO_GHCR]
     permissions:
       contents: read
       packages: write
