@@ -48,8 +48,8 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: java
-      # - name: Autobuild
-      #   uses: github/codeql-action/autobuild@v3
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
       # - name: Manual Build (if needed)
       #   run: mvn clean install
       - name: Perform CodeQL Analysis
