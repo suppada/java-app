@@ -19,3 +19,7 @@ ingress:
           pathType: ImplementationSpecific
 
 resources: {}
+
+serviceAccount:
+  create: true  # Set to true to create a new service account
+  name: java-app
