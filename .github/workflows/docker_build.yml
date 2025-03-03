@@ -1,0 +1,51 @@
+name: Docker Build and Push
+on:
+  workflow_run:
+    workflows: [ "CodeQL Analysis" ]
+    types:
+      - completed
+  # push:
+  #   branches: [ main ]
+  # pull_request:
+  #   branches: [ develop ]
+  # release:
+  #   types: [published]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  docker_build:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    #needs: codeql-analysis
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Download Maven Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: maven-artifact
+      - name: Log in to GitHub Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          labels: ${{ steps.meta.outputs.labels }}
