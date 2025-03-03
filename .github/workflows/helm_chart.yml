@@ -4,11 +4,6 @@ on:
     workflows: [ "Docker Build and Push" ]
     types:
       - completed
-  # push:
-  #   branches: [ main ]
-  # release:
-  #   types: [published]
-
 env:
   REGISTRY: ghcr.io
   CHART_NAME: java-chart
