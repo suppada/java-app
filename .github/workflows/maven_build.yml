@@ -1,9 +1,17 @@
 name: Maven Build
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ develop ]
+  workflow_call:
+    inputs:
+      java_version:
+        required: true
+        type: string
+      enable_release:
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      GITHUB_TOKEN:
+        required: true
 
 jobs:
   maven_build:
@@ -20,6 +28,7 @@ jobs:
       - name: Build project with Maven
         run: mvn -B package --file pom.xml
       - name: Upload Artifact to GitHub Release
+        if: ${{ inputs.enable_release }}
         uses: softprops/action-gh-release@v1
         with:
           files: target/*.war
