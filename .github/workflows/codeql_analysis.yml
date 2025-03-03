@@ -1,14 +1,9 @@
 name: CodeQL Analysis
 on:
   workflow_run:
-    workflows: [ "Maven Build" ]  # This ensures it runs after the Docker build workflow
+    workflows: [ "Maven Build" ] 
     types:
       - completed
-  # push:
-  #   branches: [ main ]
-  # pull_request:
-  #   branches: [ develop ]
-
 jobs:
   codeql-analysis:
     name: CodeQL Analysis

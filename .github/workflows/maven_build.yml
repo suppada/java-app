@@ -19,8 +19,10 @@ jobs:
           cache: 'maven'
       - name: Build project with Maven
         run: mvn -B package --file pom.xml
-      - name: Upload Maven Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Artifact to GitHub Release
+        uses: softprops/action-gh-release@v1
         with:
-          name: maven-artifact
-          path: target/*.war
+          files: target/*.war
+          tag_name: latest-build
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}

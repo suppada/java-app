@@ -4,13 +4,6 @@ on:
     workflows: [ "CodeQL Analysis" ]
     types:
       - completed
-  # push:
-  #   branches: [ main ]
-  # pull_request:
-  #   branches: [ develop ]
-  # release:
-  #   types: [published]
-
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
@@ -26,10 +19,26 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Download Maven Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: maven-artifact
+      - name: Install GitHub CLI
+        run: |
+          sudo apt update
+          sudo apt install gh jq -y
+
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+
+      - name: Download Maven Artifact from GitHub Release
+        run: |
+          DOWNLOAD_URL=$(gh api repos/${{ github.repository }}/releases/latest | jq -r '.assets[] | select(.name | endswith(".war")) | .browser_download_url')
+          if [ -z "$DOWNLOAD_URL" ]; then
+            echo "No WAR file found in latest release!"
+            exit 1
+          fi
+          echo "Downloading WAR file from: $DOWNLOAD_URL"
+          curl -L -o hello-1.0.war $DOWNLOAD_URL
+
+      - name: Verify WAR file exists
+        run: ls -l hello-1.0.war
       - name: Log in to GitHub Container registry
         uses: docker/login-action@v3
         with:
