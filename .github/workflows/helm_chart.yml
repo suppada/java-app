@@ -1,9 +1,13 @@
 name: Helm Chart Deployment
 on:
-  push:
-    branches: [ main ]
-  release:
-    types: [published]
+  workflow_run:
+    workflows: [ "Docker Build and Push" ]
+    types:
+      - completed
+  # push:
+  #   branches: [ main ]
+  # release:
+  #   types: [published]
 
 env:
   REGISTRY: ghcr.io
@@ -14,7 +18,7 @@ jobs:
   helm_package_and_push:
     name: Package and Push Helm Chart
     runs-on: ubuntu-latest
-    needs: docker_build
+    #needs: docker_build
     permissions:
       contents: read
       packages: write
