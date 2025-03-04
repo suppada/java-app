@@ -36,7 +36,7 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
       - name: Download Maven Artifact from GitHub Release
         run: |
-          DOWNLOAD_URL=$(gh api repos/${{ github.repository }}/releases/latest | jq -r '.assets[] | select(.name | endswith(\"${{ inputs.artifact_extension }}\")) | .browser_download_url')
+          DOWNLOAD_URL=$(gh api repos/${{ github.repository }}/releases/latest | jq -r ".assets[] | select(.name | endswith(\"${{ inputs.artifact_extension }}\")) | .browser_download_url")
           if [ -z "$DOWNLOAD_URL" ]; then
             echo "No artifact with extension ${{ inputs.artifact_extension }} found in latest release!"
             exit 1
