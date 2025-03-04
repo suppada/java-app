@@ -9,9 +9,6 @@ on:
         required: false
         type: boolean
         default: false
-    # secrets:
-    #   GITHUB_TOKEN:
-    #     required: true
 
 jobs:
   maven_build:
@@ -34,4 +31,4 @@ jobs:
           files: target/*.war
           tag_name: latest-build
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
