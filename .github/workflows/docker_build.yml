@@ -9,6 +9,14 @@ on:
         required: true
         type: string
         default: "ghcr.io"
+      artifact_extension:
+        required: false
+        type: string
+        default: ".war"
+      artifact_filename:
+        required: false
+        type: string
+        default: "artifact"
 
 jobs:
   docker_build:
@@ -28,15 +36,15 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
       - name: Download Maven Artifact from GitHub Release
         run: |
-          DOWNLOAD_URL=$(gh api repos/${{ github.repository }}/releases/latest | jq -r '.assets[] | select(.name | endswith(".war")) | .browser_download_url')
+          DOWNLOAD_URL=$(gh api repos/${{ github.repository }}/releases/latest | jq -r '.assets[] | select(.name | endswith(\"${{ inputs.artifact_extension }}\")) | .browser_download_url')
           if [ -z "$DOWNLOAD_URL" ]; then
-            echo "No WAR file found in latest release!"
+            echo "No artifact with extension ${{ inputs.artifact_extension }} found in latest release!"
             exit 1
           fi
           echo "Downloading WAR file from: $DOWNLOAD_URL"
-          curl -L -o hello-1.0.war $DOWNLOAD_URL
+          curl -L -o "${{ inputs.artifact_filename }}${{ inputs.artifact_extension }}" $DOWNLOAD_URL
       - name: Verify WAR file exists
-        run: ls -l hello-1.0.war
+        run: ls -l "${{ inputs.artifact_filename }}${{ inputs.artifact_extension }}"
       - name: Log in to GitHub Container registry
         uses: docker/login-action@v3
         with:
