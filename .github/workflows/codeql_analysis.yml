@@ -1,14 +1,15 @@
 name: CodeQL Analysis
 on:
-  workflow_run:
-    workflows: [ "Maven Build" ] 
-    types:
-      - completed
+  workflow_call:
+    inputs:
+      maven_build_status:
+        required: true
+        type: string
+
 jobs:
   codeql-analysis:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
-    #needs: maven_build
     permissions:
       security-events: write
       actions: read
