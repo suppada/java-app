@@ -30,4 +30,4 @@ jobs:
           files: target/*.war
           tag_name: latest-build
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
