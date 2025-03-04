@@ -14,7 +14,6 @@ jobs:
   docker_build:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
-    #needs: codeql-analysis
     permissions:
       contents: read
       packages: write
@@ -25,10 +24,8 @@ jobs:
         run: |
           sudo apt update
           sudo apt install gh jq -y
-
       - name: Authenticate GitHub CLI
         run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
-
       - name: Download Maven Artifact from GitHub Release
         run: |
           DOWNLOAD_URL=$(gh api repos/${{ github.repository }}/releases/latest | jq -r '.assets[] | select(.name | endswith(".war")) | .browser_download_url')
@@ -38,7 +35,6 @@ jobs:
           fi
           echo "Downloading WAR file from: $DOWNLOAD_URL"
           curl -L -o hello-1.0.war $DOWNLOAD_URL
-
       - name: Verify WAR file exists
         run: ls -l hello-1.0.war
       - name: Log in to GitHub Container registry

@@ -9,6 +9,9 @@ on:
         required: false
         type: boolean
         default: false
+      tag_name:
+        required: false
+        type: string
 jobs:
   maven_build:
     name: Maven Build
@@ -28,6 +31,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: target/*.war
-          tag_name: latest-build
+          tag_name: ${{ inputs.tag_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
