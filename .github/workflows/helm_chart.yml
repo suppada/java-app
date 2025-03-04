@@ -30,12 +30,12 @@ jobs:
         with:
           version: v3.12.0
       - name: Log in to GitHub Container Registry (for Helm)
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ${{ github.repository }} -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ${{ inputs.registry }} -u ${{ github.actor }} --password-stdin
       - name: Package Helm Chart
         run: |
           helm package ${{ inputs.chart_name }} --version ${{ inputs.chart_version }}
       - name: Push Helm Chart to OCI Registry
         run: |
-          helm push ${{ inputs.chart_name }}-${{ inputs.chart_version }}.tgz oci://${{ github.repository }}/${{ github.repository }}/java-chart
+          helm push ${{ inputs.chart_name }}-${{ inputs.chart_version }}.tgz oci://${{ inputs.registry }}/${{ github.repository }}/java-chart
       - name: Logout from Helm Registry
-        run: helm registry logout ${{ github.repository }}
+        run: helm registry logout ${{ inputs.registry }}
