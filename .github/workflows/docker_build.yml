@@ -12,11 +12,9 @@ on:
       artifact_extension:
         required: false
         type: string
-        default: ".war"
       artifact_filename:
         required: false
         type: string
-        default: "artifact"
 
 jobs:
   docker_build:
