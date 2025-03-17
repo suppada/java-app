@@ -1,0 +1,86 @@
+name: Terraform CI/CD (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      aws-region:
+        required: true
+        type: string
+      tf-version:
+        required: false
+        type: string
+        default: '1.11.2'
+      tflint-version:
+        required: false
+        type: string
+        default: '0.55.1'
+      working-directory:
+        required: false
+        type: string
+        default: './terraform'
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      TOKEN:
+        required: true
+
+jobs:
+  terraform:
+    name: 'Terraform Lint and Deploy'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+
+    env:
+      AWS_REGION: ${{ inputs.aws-region }}
+      TF_VERSION: ${{ inputs.tf-version }}
+      TFLINT_VERSION: ${{ inputs.tflint-version }}
+      GITHUB_TOKEN: ${{ secrets.TOKEN }}
+
+    steps:
+    - name: 'Checkout Repository'
+      uses: actions/checkout@v4
+
+    - name: 'Configure AWS Credentials'
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: 'Set up Terraform'
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: ${{ env.TF_VERSION }}
+
+    - name: 'Install TFLint'
+      run: |
+        curl -sLo tflint.zip https://github.com/terraform-linters/tflint/releases/download/v${{ env.TFLINT_VERSION }}/tflint_linux_amd64.zip
+        unzip tflint.zip -d /usr/local/bin/
+        tflint --version
+
+    - name: 'Terraform Init'
+      run: terraform init
+
+    - name: 'Terraform Format'
+      run: terraform fmt
+
+    - name: 'Terraform Validate'
+      run: terraform validate
+
+    - name: 'TFLint'
+      run: |
+        tflint --init
+        tflint
+    
+    - name: 'Terraform Plan'
+      run: |
+        export TF_LOG=DEBUG
+        terraform plan -out=tfplan -var "github_token=${{ secrets.TOKEN }}"
+
+    - name: 'Terraform Apply'
+      if: github.ref == 'refs/heads/main'
+      run: terraform apply -auto-approve tfplan
