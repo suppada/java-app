@@ -1,7 +1,7 @@
 name: CI/CD
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, develop, suppada-patch-2 ]
   pull_request:
     branches: [ develop ]
   release:
